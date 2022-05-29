@@ -1,4 +1,4 @@
-package com.devAlone.springboot.config.auth;
+package com.devAlone.springboot.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

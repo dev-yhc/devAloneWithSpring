@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -35,6 +36,9 @@ public class PostsApiControllerTest {
     private int port;
 
     @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
     private PostsRepository postsRepository;
 
     @Autowired
@@ -51,12 +55,12 @@ public class PostsApiControllerTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
         postsRepository.deleteAll();
     }
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(roles="USER")
     public void Posts_등록된다() throws Exception {
         //given
         String title = "title";
@@ -71,8 +75,8 @@ public class PostsApiControllerTest {
 
         //when
         mvc.perform(post(url)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
                 .andExpect(status().isOk());
 
         //then
@@ -82,25 +86,26 @@ public class PostsApiControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
-    public void Posts가_수정된다() throws Exception {
+    @WithMockUser(roles="USER")
+    public void Posts_수정된다() throws Exception {
         //given
         Posts savedPosts = postsRepository.save(Posts.builder()
                 .title("title")
                 .content("content")
                 .author("author")
                 .build());
-        Long postsId = savedPosts.getId();
 
-        String expectedTitle = "updated title";
-        String expectedContent = "updated content";
+        Long updateId = savedPosts.getId();
+        String expectedTitle = "title2";
+        String expectedContent = "content2";
+
         PostsUpdateRequestDto requestDto = PostsUpdateRequestDto.builder()
                 .title(expectedTitle)
                 .content(expectedContent)
                 .build();
 
-        //when
-        String url = "http://localhost:" + port + "/api/v1/posts/" + postsId;
+        String url = "http://localhost:" + port + "/api/v1/posts/" + updateId;
+
         //when
         mvc.perform(put(url)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -112,5 +117,4 @@ public class PostsApiControllerTest {
         assertThat(all.get(0).getTitle()).isEqualTo(expectedTitle);
         assertThat(all.get(0).getContent()).isEqualTo(expectedContent);
     }
-
 }

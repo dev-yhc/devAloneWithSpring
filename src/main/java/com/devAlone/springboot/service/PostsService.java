@@ -1,4 +1,4 @@
-package com.devAlone.springboot.service.posts;
+package com.devAlone.springboot.service;
 
 import com.devAlone.springboot.domain.posts.Posts;
 import com.devAlone.springboot.domain.posts.PostsRepository;
