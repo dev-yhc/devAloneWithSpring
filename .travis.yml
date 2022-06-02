@@ -10,8 +10,8 @@ branches:
 # Travis CI Home
 cache:
   directories:
-    - '$Home/.m2/repository'
-    - '$Home/.gradle'
+    - '$HOME/.m2/repository'
+    - '$HOME/.gradle'
 
 script: "./gradlew clean build"
 
